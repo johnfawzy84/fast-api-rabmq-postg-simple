@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    command: fastapi dev main.py
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - my-network
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postg_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - my-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - my-network
+  
+  pgadmin:
+    image: dpage/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: your-password
+    ports:
+      - "8080:80"
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+    networks:
+      - my-network
+
+networks:
+  my-network:
