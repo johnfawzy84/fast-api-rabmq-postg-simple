@@ -34,7 +34,7 @@ services:
       - my-network
   
   pgadmin:
-    image: elestio/pgadmin
+    image: dpage/pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@email.com
       PGADMIN_DEFAULT_PASSWORD: your-password
