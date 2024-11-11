@@ -7,21 +7,22 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - postgres
       - rabbitmq
     networks:
       - my-network
 
-  db:
+  postgres:
     image: postgres:latest
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: postg_db
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - '5432:5432'
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - /custom/mount:/var/lib/postgresql/data
     networks:
       - my-network
 
@@ -33,15 +34,18 @@ services:
     networks:
       - my-network
   
-  pgadmin:
-    image: dpage/pgadmin
+  pgweb:
+    container_name: pgweb
+    restart: always
+    image: sosedoff/pgweb
+    ports: 
+      - "8081:8081" 
+    links: 
+      - postgres:postgres  # my database container is called postgres, not db
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@email.com
-      PGADMIN_DEFAULT_PASSWORD: your-password
-    ports:
-      - "8080:80"
-    volumes:
-      - ./servers.json:/pgadmin4/servers.json
+      - DATABASE_URL=postgres://user:pass@postgres:5432/postgres?sslmode=disable
+    depends_on:
+      - postgres
     networks:
       - my-network
 

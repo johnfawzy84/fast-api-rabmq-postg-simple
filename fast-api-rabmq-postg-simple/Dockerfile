@@ -2,15 +2,17 @@
 FROM python:3.12-slim-bookworm
 
 # Set the working directory in the container
-WORKDIR /fast-api-rabmq-postg-simple
+WORKDIR /fast-api-rabmq-postg-simple/fast-api-rabmq-postg-simple
 
 # Install dependencies
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN pip install uv
 
 # Copy the rest of the application code
-COPY . .
+COPY main.py main.py
+COPY pyproject.toml pyproject.toml
+COPY uv.lock uv.lock
 
-RUN uv --version
+RUN uv pip install
 
 # Expose the port on which the app will run
 EXPOSE 8000
